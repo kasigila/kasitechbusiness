@@ -47,6 +47,24 @@ export default async function CommandLayout({
               Businesses
             </Link>
             <Link
+              href="/command/discovery"
+              className="hidden text-sm text-white/70 underline-offset-4 hover:underline lg:inline"
+            >
+              Discovery
+            </Link>
+            <Link
+              href="/command/workspace"
+              className="hidden text-sm text-white/70 underline-offset-4 hover:underline lg:inline"
+            >
+              Workspace
+            </Link>
+            <Link
+              href="/command/plans"
+              className="hidden text-sm text-white/70 underline-offset-4 hover:underline lg:inline"
+            >
+              Plans
+            </Link>
+            <Link
               href="/app"
               className="text-sm text-white/70 underline-offset-4 hover:underline"
             >

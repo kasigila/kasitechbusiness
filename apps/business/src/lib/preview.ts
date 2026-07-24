@@ -51,3 +51,12 @@ export const PREVIEW_BUSINESS = {
   owner_name: "Demo Owner",
   owner_email: "owner@demo.lido.test",
 };
+
+export const PREVIEW_LOCATIONS = [
+  {
+    id: "00000000-0000-4000-8000-000000000021",
+    name: "Msasani Slipway",
+    address: "Msasani Peninsula, Dar es Salaam",
+    status: "ACTIVE" as const,
+  },
+];

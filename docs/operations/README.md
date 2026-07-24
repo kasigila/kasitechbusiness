@@ -31,6 +31,17 @@ Document concrete RPO/RTO once Supabase production project exists (Phase 10). Un
 - Enable Supabase automated backups on paid plan before client launch.
 - Quarterly restore drill checklist will live in this folder.
 
+See also [HARDENING.md](./HARDENING.md) and [DEPLOY.md](./DEPLOY.md).
+
+## Migrations
+
+Apply in order from `@kasitech/database` `MIGRATIONS`:
+
+1. `0001_foundation.sql`
+2. `0002_commercial.sql`
+3. `0003_admin_implementation.sql`
+4. `0004_operations.sql`
+
 ## Incident basics
 
 1. Capture error ID / request correlation if present.

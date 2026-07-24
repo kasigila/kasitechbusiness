@@ -47,6 +47,30 @@ export default function PreviewHubPage() {
             href="/command/businesses/new"
             cta="Open form"
           />
+          <PreviewCard
+            title="Discovery"
+            description="Client questionnaire with draft workspace recommendation."
+            href="/app/discovery"
+            cta="Open discovery"
+          />
+          <PreviewCard
+            title="Website CMS"
+            description="Draft / edit / publish content surfaces."
+            href="/app/website"
+            cta="Open website"
+          />
+          <PreviewCard
+            title="Public content API"
+            description="Published CMS JSON for marketing sites."
+            href="/api/v1/public/lido-slipway/en/content"
+            cta="View JSON"
+          />
+          <PreviewCard
+            title="Workspace composer"
+            description="Command-side recommendation draft for hospitality."
+            href="/command/workspace"
+            cta="Open composer"
+          />
         </div>
 
         <p className="mt-10 text-sm text-[var(--kb-muted)]">

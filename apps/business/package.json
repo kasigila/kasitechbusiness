@@ -19,6 +19,7 @@
     "@kasitech/tenancy": "workspace:*",
     "@kasitech/ui": "workspace:*",
     "@kasitech/validation": "workspace:*",
+    "@kasitech/workspace": "workspace:*",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.50.2",
     "clsx": "^2.1.1",

@@ -17,4 +17,5 @@ Phase 0 deliverables for **KasiTech Business**.
 | [10-CHECKLIST.md](./10-CHECKLIST.md) | Trackable checklist |
 | [11-PHASE2-COMMERCIAL.md](./11-PHASE2-COMMERCIAL.md) | Phase 2 commercial notes |
 | [12-PHASE3-ADMIN.md](./12-PHASE3-ADMIN.md) | Phase 3 Create Business / 360 / preview |
+| [13-PHASES-4-10.md](./13-PHASES-4-10.md) | Phases 4–10 delivery notes |
 | [THREAT-MODEL.md](./THREAT-MODEL.md) | Condensed threat model |

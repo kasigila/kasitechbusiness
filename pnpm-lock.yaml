@@ -44,6 +44,9 @@ importers:
       '@kasitech/validation':
         specifier: workspace:*
         version: link:../../packages/validation
+      '@kasitech/workspace':
+        specifier: workspace:*
+        version: link:../../packages/workspace
       '@supabase/ssr':
         specifier: ^0.6.1
         version: 0.6.1(@supabase/supabase-js@2.110.8)
@@ -195,6 +198,15 @@ importers:
       zod:
         specifier: ^3.25.67
         version: 3.25.76
+    devDependencies:
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.7(@types/node@20.19.43)(jiti@2.7.0)(lightningcss@1.32.0)
+
+  packages/workspace:
     devDependencies:
       typescript:
         specifier: ^5.8.3

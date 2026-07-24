@@ -63,6 +63,12 @@ export default async function CommandHomePage() {
         <Link href="/command/businesses/new" className="underline-offset-4 hover:underline">
           Create Business
         </Link>
+        <Link href="/command/discovery" className="underline-offset-4 hover:underline">
+          Discovery
+        </Link>
+        <Link href="/command/workspace" className="underline-offset-4 hover:underline">
+          Workspace composer
+        </Link>
         <Link href="/command/plans" className="underline-offset-4 hover:underline">
           Plans & add-ons
         </Link>

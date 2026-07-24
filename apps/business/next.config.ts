@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
     "@kasitech/audit",
     "@kasitech/database",
     "@kasitech/entitlements",
+    "@kasitech/workspace",
   ],
 };
 

@@ -70,47 +70,49 @@ Track completion across phases. Update statuses as work lands.
 
 ## Phase 4 — Onboarding
 
-- [ ] Discovery system
-- [ ] Recommendations (unpublished)
-- [ ] Owner invite E2E
-- [ ] Onboarding mode UX
+- [x] Discovery system (client questionnaire + draft recommendation)
+- [x] Recommendations (unpublished drafts via workspace package)
+- [x] Owner invite accept flow (token hash → membership; needs live Supabase for E2E)
+- [x] Onboarding mode UX
 
 ## Phase 5 — Workspace
 
-- [ ] Dynamic navigation / terminology / widgets
-- [ ] Workspace composer
-- [ ] Extension registry
+- [x] Dynamic navigation / terminology / widgets
+- [x] Workspace composer (Command)
+- [x] Extension registry (`registerWidget`)
 
 ## Phase 6 — CMS
 
-- [ ] Structured CMS + media
-- [ ] Draft / preview / publish / versions
-- [ ] Public content API v1
+- [x] Structured CMS schema + website/editor UI
+- [ ] Draft / preview / publish / versions (schema ready; full publish pipeline pending)
+- [x] Public content API v1
 - [ ] Cache revalidation
 
 ## Phase 7 — Core modules
 
-- [ ] Catalog, bookings, events, customers, locations, team
+- [x] Catalog, bookings, events, customers, locations, team (UI + schema)
+- [ ] Live CRUD mutations wired to Supabase for all modules
 
 ## Phase 8 — Advanced
 
-- [ ] QR, tables, service requests, analytics, loyalty, campaigns, automation
+- [x] QR, tables, service requests, analytics (UI + schema)
+- [ ] Loyalty, campaigns, automation
 
 ## Phase 9 — Billing & support
 
-- [ ] Billing abstraction + invoices/payments
-- [ ] Upgrade requests
-- [ ] Suspension policy states
-- [ ] Support + professional services
+- [x] Payments abstraction stub + invoices schema
+- [x] Upgrade requests (commercial phase)
+- [ ] Suspension policy automation
+- [x] Support + professional services UI
 
 ## Phase 10 — Hardening
 
-- [ ] Rate limits
-- [ ] Monitoring / backups docs
-- [ ] Full E2E critical path
+- [ ] Rate limits (edge)
+- [x] Monitoring / backups docs (`docs/operations/HARDENING.md`)
+- [ ] Full E2E critical path against staging
 - [ ] Accessibility pass
 - [ ] Staging + production gates
-- [ ] Operational runbooks
+- [x] Operational runbooks (deploy + hardening)
 
 ## Non-negotiables (always)
 

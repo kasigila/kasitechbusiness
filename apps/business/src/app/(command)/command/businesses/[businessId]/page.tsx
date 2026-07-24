@@ -275,11 +275,32 @@ function Business360View({
         />
       </section>
 
-      <section id="workspace" className="mb-8">
-        <EmptyState
-          title="Workspace"
-          description="Draft workspace configuration is generated on create. Composer publish lands in Phase 5."
-        />
+      <section id="workspace" className="mb-8 rounded-2xl border border-white/10 bg-white/5 p-5">
+        <h2 className="text-lg font-semibold">Workspace</h2>
+        <p className="mt-2 text-sm text-white/70">
+          Draft workspace configuration is generated on create. Review discovery
+          answers, then publish from the composer when ready.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-3 text-sm">
+          <Link
+            href="/command/workspace"
+            className="underline underline-offset-4"
+          >
+            Open composer
+          </Link>
+          <Link
+            href="/command/discovery"
+            className="underline underline-offset-4"
+          >
+            Discovery queue
+          </Link>
+          <Link
+            href="/app/discovery"
+            className="underline underline-offset-4"
+          >
+            Client discovery (impersonate via app)
+          </Link>
+        </div>
       </section>
     </div>
   );
