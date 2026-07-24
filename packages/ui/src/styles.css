@@ -1,0 +1,181 @@
+/* KasiTech Business design tokens — calm B2B operating surface */
+:root {
+  --kb-black: #090909;
+  --kb-ivory: #f7f6f2;
+  --kb-green: #b8e600;
+  --kb-green-strong: #9fcc00;
+  --kb-ink: #141414;
+  --kb-muted: #6b6b6b;
+  --kb-border: #e4e2da;
+  --kb-surface: #ffffff;
+  --kb-surface-2: #f3f2ec;
+  --kb-danger: #b42318;
+  --kb-warning: #b54708;
+  --kb-success: #027a48;
+  --kb-radius: 10px;
+  --kb-shadow: 0 1px 2px rgb(20 20 20 / 6%), 0 8px 24px rgb(20 20 20 / 4%);
+  --kb-font-sans: var(--font-kasi-sans), "Segoe UI", sans-serif;
+  --kb-font-display: var(--font-kasi-display), var(--kb-font-sans);
+  --kb-font-mono: var(--font-kasi-mono), ui-monospace, monospace;
+}
+
+.kb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.7rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font: 600 0.95rem/1.2 var(--kb-font-sans);
+  cursor: pointer;
+  transition: background 160ms ease, color 160ms ease, border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.kb-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.kb-btn-primary {
+  background: var(--kb-ink);
+  color: var(--kb-ivory);
+}
+
+.kb-btn-primary:hover:not(:disabled) {
+  background: #000;
+}
+
+.kb-btn-secondary {
+  background: var(--kb-surface);
+  color: var(--kb-ink);
+  border-color: var(--kb-border);
+}
+
+.kb-btn-secondary:hover:not(:disabled) {
+  background: var(--kb-surface-2);
+}
+
+.kb-btn-ghost {
+  background: transparent;
+  color: var(--kb-ink);
+}
+
+.kb-btn-danger {
+  background: var(--kb-danger);
+  color: white;
+}
+
+.kb-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font: 600 0.85rem/1.3 var(--kb-font-sans);
+  color: var(--kb-ink);
+}
+
+.kb-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--kb-border);
+  border-radius: var(--kb-radius);
+  background: var(--kb-surface);
+  color: var(--kb-ink);
+  font: 400 1rem/1.4 var(--kb-font-sans);
+}
+
+.kb-input:focus-visible {
+  outline: 2px solid var(--kb-green-strong);
+  outline-offset: 2px;
+  border-color: var(--kb-green-strong);
+}
+
+.kb-field {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.kb-hint,
+.kb-error {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.kb-hint {
+  color: var(--kb-muted);
+}
+
+.kb-error {
+  color: var(--kb-danger);
+}
+
+.kb-empty {
+  padding: 2.5rem 1.25rem;
+  text-align: center;
+  border: 1px dashed var(--kb-border);
+  border-radius: calc(var(--kb-radius) + 2px);
+  background: var(--kb-surface-2);
+}
+
+.kb-empty-title {
+  margin: 0 0 0.5rem;
+  font: 600 1.15rem/1.3 var(--kb-font-display);
+}
+
+.kb-empty-desc {
+  margin: 0 0 1.25rem;
+  color: var(--kb-muted);
+}
+
+.kb-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.5rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font: 600 0.72rem/1 var(--kb-font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.kb-badge-neutral {
+  background: var(--kb-surface-2);
+  color: var(--kb-muted);
+}
+
+.kb-badge-success {
+  background: #ecfdf3;
+  color: var(--kb-success);
+}
+
+.kb-badge-warning {
+  background: #fffaeb;
+  color: var(--kb-warning);
+}
+
+.kb-badge-danger {
+  background: #fef3f2;
+  color: var(--kb-danger);
+}
+
+.kb-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.kb-page-title {
+  margin: 0;
+  font: 600 clamp(1.4rem, 2vw, 1.85rem)/1.2 var(--kb-font-display);
+  letter-spacing: -0.03em;
+}
+
+.kb-page-desc {
+  margin: 0.35rem 0 0;
+  color: var(--kb-muted);
+}

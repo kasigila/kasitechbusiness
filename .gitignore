@@ -1,0 +1,27 @@
+# Dependencies
+node_modules
+.pnpm-store
+dist
+.next
+.turbo
+coverage
+*.tsbuildinfo
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# OS / IDE
+.DS_Store
+.idea
+.vscode
+
+# Supabase
+supabase/.temp
+
+# Test / logs
+*.log
+playwright-report
+test-results
