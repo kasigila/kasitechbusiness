@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { FOUNDATION_MIGRATION } from "./index";
+import { COMMERCIAL_MIGRATION, FOUNDATION_MIGRATION, MIGRATIONS } from "./index";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -28,5 +28,36 @@ describe("foundation migration", () => {
 
   it("does not create public registration tables", () => {
     expect(sql.toLowerCase()).not.toContain("create table public.signups");
+  });
+});
+
+describe("commercial migration", () => {
+  const sql = readFileSync(join(root, "migrations", COMMERCIAL_MIGRATION), "utf8");
+
+  it("is listed in migration order", () => {
+    expect(MIGRATIONS).toEqual([FOUNDATION_MIGRATION, COMMERCIAL_MIGRATION]);
+  });
+
+  it("seeds Launch/Growth/Pro/Scale/Enterprise", () => {
+    for (const key of ["LAUNCH", "GROWTH", "PRO", "SCALE", "ENTERPRISE"]) {
+      expect(sql).toContain(`'${key}'`);
+    }
+  });
+
+  it("enables RLS on commercial tenant tables", () => {
+    for (const table of [
+      "subscriptions",
+      "business_addons",
+      "upgrade_requests",
+      "locations",
+    ]) {
+      expect(sql).toContain(`alter table public.${table} enable row level security`);
+    }
+  });
+
+  it("stores plan prices as configurable DB values", () => {
+    expect(sql).toContain("monthly_price_minor");
+    expect(sql).toContain("150000");
+    expect(sql).toContain("400000");
   });
 });

@@ -4,6 +4,12 @@
  */
 
 export const FOUNDATION_MIGRATION = "0001_foundation.sql";
+export const COMMERCIAL_MIGRATION = "0002_commercial.sql";
+
+export const MIGRATIONS = [
+  FOUNDATION_MIGRATION,
+  COMMERCIAL_MIGRATION,
+] as const;
 
 export type BusinessStatus =
   | "ONBOARDING"

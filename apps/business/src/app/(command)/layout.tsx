@@ -1,16 +1,19 @@
 import Link from "next/link";
-import { Badge, Button, PageHeader } from "@kasitech/ui";
+import { Badge, Button } from "@kasitech/ui";
 import { signOutAction } from "@/app/(public)/actions";
+import { requireCommandAccess } from "@/lib/auth/guards";
 
 /**
  * Command Center is intentionally outside ordinary business navigation.
- * Access must be gated by internal_roles (enforced in page + later data layer).
+ * Access is gated by internal_roles via requireCommandAccess().
  */
-export default function CommandLayout({
+export default async function CommandLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const actor = await requireCommandAccess();
+
   return (
     <div className="min-h-screen bg-[var(--kb-ink)] text-[var(--kb-ivory)]">
       <header className="border-b border-white/10">
@@ -20,6 +23,9 @@ export default function CommandLayout({
               KasiTech Command
             </Link>
             <Badge tone="warning">Internal</Badge>
+            <span className="hidden text-sm text-white/60 sm:inline">
+              {actor.internalRoles.join(" · ")}
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <Link
@@ -39,11 +45,4 @@ export default function CommandLayout({
       <div className="mx-auto max-w-6xl px-4 py-6">{children}</div>
     </div>
   );
-}
-
-export function CommandHeader(props: {
-  title: string;
-  description?: string;
-}) {
-  return <PageHeader {...props} />;
 }

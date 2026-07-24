@@ -15,4 +15,5 @@ Phase 0 deliverables for **KasiTech Business**.
 | [08-SECURITY.md](./08-SECURITY.md) | Security risks & controls |
 | [09-SPEC-REVISIONS.md](./09-SPEC-REVISIONS.md) | Recommended clarifications |
 | [10-CHECKLIST.md](./10-CHECKLIST.md) | Trackable checklist |
+| [11-PHASE2-COMMERCIAL.md](./11-PHASE2-COMMERCIAL.md) | Phase 2 commercial notes |
 | [THREAT-MODEL.md](./THREAT-MODEL.md) | Condensed threat model |

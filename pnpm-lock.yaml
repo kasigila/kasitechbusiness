@@ -29,6 +29,9 @@ importers:
       '@kasitech/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@kasitech/entitlements':
+        specifier: workspace:*
+        version: link:../../packages/entitlements
       '@kasitech/permissions':
         specifier: workspace:*
         version: link:../../packages/permissions
@@ -119,6 +122,19 @@ importers:
   packages/config: {}
 
   packages/database:
+    devDependencies:
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.7(@types/node@20.19.43)(jiti@2.7.0)(lightningcss@1.32.0)
+
+  packages/entitlements:
+    dependencies:
+      '@kasitech/validation':
+        specifier: workspace:*
+        version: link:../validation
     devDependencies:
       typescript:
         specifier: ^5.8.3

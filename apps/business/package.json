@@ -14,6 +14,7 @@
     "@kasitech/audit": "workspace:*",
     "@kasitech/auth": "workspace:*",
     "@kasitech/database": "workspace:*",
+    "@kasitech/entitlements": "workspace:*",
     "@kasitech/permissions": "workspace:*",
     "@kasitech/tenancy": "workspace:*",
     "@kasitech/ui": "workspace:*",

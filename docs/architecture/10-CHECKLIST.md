@@ -42,20 +42,23 @@ Track completion across phases. Update statuses as work lands.
 - [x] README + ops notes
 - [x] CI workflow (lint/typecheck/test)
 
-### Remaining Phase 1 polish (before Phase 2)
+### Remaining Phase 1 polish
 
-- [ ] Wire live Supabase project + apply migration
-- [ ] Load ActorContext from DB memberships in `/app` and `/command`
-- [ ] Enforce Command Center with `internal_roles` server-side (beyond middleware auth)
+- [ ] Wire live Supabase project + apply migrations `0001` + `0002`
+- [x] Load ActorContext from DB memberships in `/app` and `/command`
+- [x] Enforce Command Center with `internal_roles` server-side (beyond middleware auth)
 - [ ] Postgres RLS integration tests against staging DB
 - [ ] Invitation email send path (Resend)
 
 ## Phase 2 — Commercial
 
-- [ ] Plans / features / entitlements schema
-- [ ] Entitlement resolver
-- [ ] Seat & location limit hooks
-- [ ] Seed Launch/Growth/Pro/Scale/Enterprise
+- [x] Plans / features / entitlements schema
+- [x] Entitlement resolver
+- [x] Seat & location limit hooks
+- [x] Seed Launch/Growth/Pro/Scale/Enterprise
+- [x] Billing UX (plan, add-ons, usage, upgrade requests)
+- [x] Team seats display + limit messaging
+- [x] Command plans catalog view
 
 ## Phase 3 — Super Admin
 

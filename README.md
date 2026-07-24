@@ -10,8 +10,9 @@ Commercial multi-tenant B2B SaaS platform for KasiTech clients.
 | Phase | State |
 |-------|--------|
 | Phase 0 — Architecture | Complete (`docs/architecture/`) |
-| Phase 1 — Foundation | In progress (monorepo, auth UI, tenancy packages, RLS migration) |
-| Phases 2–10 | Planned |
+| Phase 1 — Foundation | Core complete; live Supabase wiring pending |
+| Phase 2 — Commercial | Schema, entitlements, billing/team UX landed |
+| Phases 3–10 | Planned |
 
 ## Architecture docs
 
@@ -73,5 +74,6 @@ Apply foundation migration to your Supabase project:
 | `@kasitech/auth` | Auth policy + invitation tokens |
 | `@kasitech/tenancy` | Tenant context resolution |
 | `@kasitech/permissions` | Permission catalog |
+| `@kasitech/entitlements` | Plan/add-on/override resolution + limits |
 | `@kasitech/audit` | Audit event types/writer |
 | `@kasitech/validation` | Shared result/error contract |

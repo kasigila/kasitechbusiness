@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string }>;
+  searchParams: Promise<{ next?: string; error?: string }>;
 }) {
   const params = await searchParams;
   const marketingUrl =
@@ -31,6 +31,12 @@ export default async function LoginPage({
         </div>
 
         <div className="rounded-2xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-6 shadow-[var(--kb-shadow)] sm:p-8">
+          {params.error === "config" ? (
+            <p className="mb-4 text-sm text-[var(--kb-warning)]" role="status">
+              Authentication is not configured. Set Supabase environment
+              variables to enable sign-in.
+            </p>
+          ) : null}
           <LoginForm nextPath={params.next} />
         </div>
 
