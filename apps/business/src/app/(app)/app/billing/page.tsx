@@ -5,8 +5,12 @@ import {
   formatTzs,
   getLimit,
   isFeatureEnabled,
+  resolveEntitlements,
 } from "@kasitech/entitlements";
-import { requireTenantContext } from "@/lib/auth/guards";
+import {
+  isUsingPreviewData,
+  requireTenantContext,
+} from "@/lib/auth/guards";
 import {
   countActiveLocations,
   countActiveSeats,
@@ -22,6 +26,46 @@ export const metadata: Metadata = {
 
 export default async function BillingPage() {
   const { tenant } = await requireTenantContext();
+
+  if (isUsingPreviewData()) {
+    const entitlements = resolveEntitlements({
+      businessId: tenant.businessId,
+      planKey: "PRO",
+      planName: "Pro",
+      planEntitlements: [
+        { featureKey: "max_users", value: "10", valueType: "limit" },
+        { featureKey: "max_locations", value: "2", valueType: "limit" },
+        { featureKey: "bookings_enabled", value: "true", valueType: "boolean" },
+        { featureKey: "qr_enabled", value: "true", valueType: "boolean" },
+        { featureKey: "loyalty_enabled", value: "false", valueType: "boolean" },
+      ],
+    });
+    const seats = 4;
+    const seatLimit = getLimit(entitlements, "max_users");
+    const seatHints = upgradeHintsForLimit("max_users", "PRO");
+
+    return (
+      <BillingView
+        planName="Pro"
+        planPrice={800000}
+        addonTotal={75000}
+        recurringTotal={875000}
+        subscriptionStatus="ONBOARDING"
+        paymentStatus="PAID"
+        billingStart="2026-08-01"
+        addonRows={[{ name: "Team Pack", quantity: 1, price: 75000 }]}
+        seats={seats}
+        seatLimit={seatLimit}
+        locations={1}
+        locationLimit={2}
+        entitlements={entitlements}
+        seatHints={seatHints}
+        atSeatLimit={false}
+        preview
+      />
+    );
+  }
+
   const entitlements = await getEffectiveEntitlements(tenant.businessId);
   const seats = await countActiveSeats(tenant.businessId);
   const locations = await countActiveLocations(tenant.businessId);
@@ -80,13 +124,56 @@ export default async function BillingPage() {
   const seatLimit = getLimit(entitlements, "max_users");
   const locationLimit = getLimit(entitlements, "max_locations");
   const seatHints = upgradeHintsForLimit("max_users", entitlements.planKey);
-  const atSeatLimit = seats >= seatLimit;
+  const atSeatLimit = seats >= seatLimit && seatLimit > 0;
 
+  return (
+    <BillingView
+      planName={plan?.name ?? "Not assigned"}
+      planPrice={Number(planPrice)}
+      addonTotal={addonTotal}
+      recurringTotal={recurringTotal}
+      subscriptionStatus={subscription?.status ?? "—"}
+      paymentStatus={subscription?.payment_status ?? "—"}
+      billingStart={subscription?.billing_start_date ?? "—"}
+      addonRows={addonRows}
+      seats={seats}
+      seatLimit={seatLimit}
+      locations={locations}
+      locationLimit={locationLimit}
+      entitlements={entitlements}
+      seatHints={seatHints}
+      atSeatLimit={atSeatLimit}
+    />
+  );
+}
+
+function BillingView(props: {
+  planName: string;
+  planPrice: number;
+  addonTotal: number;
+  recurringTotal: number;
+  subscriptionStatus: string;
+  paymentStatus: string;
+  billingStart: string;
+  addonRows: Array<{ name: string; quantity: number; price: number }>;
+  seats: number;
+  seatLimit: number;
+  locations: number;
+  locationLimit: number;
+  entitlements: ReturnType<typeof resolveEntitlements>;
+  seatHints: { addonKey?: string; planKey?: string };
+  atSeatLimit: boolean;
+  preview?: boolean;
+}) {
   return (
     <div>
       <PageHeader
         title="Billing"
-        description="Current plan, add-ons, usage limits, and upgrade requests. Upgrades are reviewed by KasiTech — nothing is charged silently."
+        description={
+          props.preview
+            ? "Preview billing UX with demo Pro plan data."
+            : "Current plan, add-ons, usage limits, and upgrade requests. Upgrades are reviewed by KasiTech — nothing is charged silently."
+        }
       />
 
       <div className="grid gap-4 lg:grid-cols-2">
@@ -95,37 +182,36 @@ export default async function BillingPage() {
           <dl className="mt-4 grid gap-3 text-sm">
             <div className="flex justify-between gap-3">
               <dt className="text-[var(--kb-muted)]">Plan</dt>
-              <dd className="font-medium">{plan?.name ?? "Not assigned"}</dd>
+              <dd className="font-medium">{props.planName}</dd>
             </div>
             <div className="flex justify-between gap-3">
               <dt className="text-[var(--kb-muted)]">Monthly price</dt>
-              <dd className="font-medium">{formatTzs(Number(planPrice))}</dd>
+              <dd className="font-medium">{formatTzs(props.planPrice)}</dd>
             </div>
             <div className="flex justify-between gap-3">
               <dt className="text-[var(--kb-muted)]">Add-ons</dt>
-              <dd className="font-medium">{formatTzs(addonTotal)}</dd>
+              <dd className="font-medium">{formatTzs(props.addonTotal)}</dd>
             </div>
             <div className="flex justify-between gap-3 border-t border-[var(--kb-border)] pt-3">
               <dt className="font-medium">Total recurring</dt>
-              <dd className="font-semibold">{formatTzs(recurringTotal)}</dd>
+              <dd className="font-semibold">{formatTzs(props.recurringTotal)}</dd>
             </div>
             <div className="flex justify-between gap-3">
               <dt className="text-[var(--kb-muted)]">Subscription</dt>
-              <dd>{subscription?.status ?? "—"}</dd>
+              <dd>{props.subscriptionStatus}</dd>
             </div>
             <div className="flex justify-between gap-3">
               <dt className="text-[var(--kb-muted)]">Payment status</dt>
-              <dd>{subscription?.payment_status ?? "—"}</dd>
+              <dd>{props.paymentStatus}</dd>
             </div>
             <div className="flex justify-between gap-3">
               <dt className="text-[var(--kb-muted)]">Billing start</dt>
-              <dd>{subscription?.billing_start_date ?? "—"}</dd>
+              <dd>{props.billingStart}</dd>
             </div>
           </dl>
-
-          {addonRows.length > 0 ? (
+          {props.addonRows.length ? (
             <ul className="mt-4 space-y-2 border-t border-[var(--kb-border)] pt-4 text-sm">
-              {addonRows.map((row) => (
+              {props.addonRows.map((row) => (
                 <li key={row.name} className="flex justify-between gap-3">
                   <span>
                     {row.name} × {row.quantity}
@@ -146,28 +232,28 @@ export default async function BillingPage() {
               <div className="flex justify-between">
                 <span>Team seats</span>
                 <span className="font-medium">
-                  {seats} / {seatLimit}
+                  {props.seats} / {props.seatLimit}
                 </span>
               </div>
-              {atSeatLimit ? (
+              {props.atSeatLimit ? (
                 <div className="mt-3 rounded-xl bg-[var(--kb-surface-2)] p-3">
                   <p className="font-medium">
-                    You&apos;ve reached your {entitlements.planName ?? "current"}{" "}
-                    plan&apos;s {seatLimit}-user limit.
+                    You&apos;ve reached your {props.entitlements.planName ?? "current"}{" "}
+                    plan&apos;s {props.seatLimit}-user limit.
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {seatHints.addonKey ? (
+                    {props.seatHints.addonKey ? (
                       <UpgradeRequestForm
                         requestType="ADDON"
-                        targetAddonKey={seatHints.addonKey}
+                        targetAddonKey={props.seatHints.addonKey}
                         featureKey="max_users"
                         label="Request Add-on"
                       />
                     ) : null}
-                    {seatHints.planKey ? (
+                    {props.seatHints.planKey ? (
                       <UpgradeRequestForm
                         requestType="UPGRADE_PLAN"
-                        targetPlanKey={seatHints.planKey}
+                        targetPlanKey={props.seatHints.planKey}
                         featureKey="max_users"
                         label="Request Upgrade"
                       />
@@ -179,13 +265,13 @@ export default async function BillingPage() {
             <li className="flex justify-between">
               <span>Locations</span>
               <span className="font-medium">
-                {locations} / {locationLimit}
+                {props.locations} / {props.locationLimit}
               </span>
             </li>
             <li className="flex justify-between">
               <span>Bookings</span>
               <span className="font-medium">
-                {isFeatureEnabled(entitlements, "bookings_enabled")
+                {isFeatureEnabled(props.entitlements, "bookings_enabled")
                   ? "Included"
                   : "Not on plan"}
               </span>
@@ -193,7 +279,7 @@ export default async function BillingPage() {
             <li className="flex justify-between">
               <span>QR</span>
               <span className="font-medium">
-                {isFeatureEnabled(entitlements, "qr_enabled")
+                {isFeatureEnabled(props.entitlements, "qr_enabled")
                   ? "Included"
                   : "Not on plan"}
               </span>
@@ -201,13 +287,12 @@ export default async function BillingPage() {
             <li className="flex justify-between">
               <span>Loyalty</span>
               <span className="font-medium">
-                {isFeatureEnabled(entitlements, "loyalty_enabled")
+                {isFeatureEnabled(props.entitlements, "loyalty_enabled")
                   ? "Included"
                   : "Not on plan"}
               </span>
             </li>
           </ul>
-
           <div className="mt-6">
             <Link
               href="/app/team"

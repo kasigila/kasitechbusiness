@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { COMMERCIAL_MIGRATION, FOUNDATION_MIGRATION, MIGRATIONS } from "./index";
+import { COMMERCIAL_MIGRATION, FOUNDATION_MIGRATION, ADMIN_IMPLEMENTATION_MIGRATION, MIGRATIONS } from "./index";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -35,7 +35,11 @@ describe("commercial migration", () => {
   const sql = readFileSync(join(root, "migrations", COMMERCIAL_MIGRATION), "utf8");
 
   it("is listed in migration order", () => {
-    expect(MIGRATIONS).toEqual([FOUNDATION_MIGRATION, COMMERCIAL_MIGRATION]);
+    expect(MIGRATIONS).toEqual([
+      FOUNDATION_MIGRATION,
+      COMMERCIAL_MIGRATION,
+      ADMIN_IMPLEMENTATION_MIGRATION,
+    ]);
   });
 
   it("seeds Launch/Growth/Pro/Scale/Enterprise", () => {

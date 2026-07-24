@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { EmptyState, PageHeader } from "@kasitech/ui";
 import {
   getActiveBusinessId,
+  isUsingPreviewData,
   requireActor,
 } from "@/lib/auth/guards";
 import { createClient } from "@/lib/supabase/server";
+import { PREVIEW_BUSINESS } from "@/lib/preview";
 
 export const metadata: Metadata = {
   title: "Overview",
@@ -13,6 +16,62 @@ export const metadata: Metadata = {
 export default async function AppHomePage() {
   const actor = await requireActor();
   const businessId = await getActiveBusinessId(actor);
+
+  if (isUsingPreviewData()) {
+    return (
+      <div>
+        <PageHeader
+          title={PREVIEW_BUSINESS.display_name}
+          description="Preview workspace — configured modules appear after discovery and launch. This is demo data."
+        />
+        <div className="grid gap-4 md:grid-cols-3">
+          {[
+            { label: "Status", value: "ONBOARDING" },
+            { label: "Plan", value: "Pro" },
+            { label: "Industry", value: "Hospitality" },
+          ].map((card) => (
+            <div
+              key={card.label}
+              className="rounded-2xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-5"
+            >
+              <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--kb-muted)]">
+                {card.label}
+              </p>
+              <p className="mt-2 text-lg font-semibold">{card.value}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {[
+            { label: "Website visitors", value: "1,284" },
+            { label: "Reservations today", value: "12" },
+            { label: "Open table requests", value: "3" },
+          ].map((card) => (
+            <div
+              key={card.label}
+              className="rounded-2xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-5"
+            >
+              <p className="text-sm text-[var(--kb-muted)]">{card.label}</p>
+              <p className="mt-2 text-3xl font-semibold tracking-[-0.03em]">
+                {card.value}
+              </p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link href="/app/team" className="kb-btn kb-btn-secondary">
+            Team
+          </Link>
+          <Link href="/app/billing" className="kb-btn kb-btn-secondary">
+            Billing
+          </Link>
+          <Link href="/preview" className="kb-btn kb-btn-ghost">
+            Preview hub
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   if (!businessId) {
     return (
@@ -55,7 +114,13 @@ export default async function AppHomePage() {
     `,
     )
     .eq("business_id", businessId)
-    .in("status", ["ONBOARDING", "ACTIVE", "PAST_DUE", "GRACE_PERIOD", "RESTRICTED"])
+    .in("status", [
+      "ONBOARDING",
+      "ACTIVE",
+      "PAST_DUE",
+      "GRACE_PERIOD",
+      "RESTRICTED",
+    ])
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -68,7 +133,7 @@ export default async function AppHomePage() {
     <div>
       <PageHeader
         title={business?.display_name ?? "Your workspace"}
-        description="Your configured workspace will expand as onboarding and modules are published. Phase 2 adds plan entitlements and usage limits."
+        description="Your configured workspace will expand as onboarding and modules are published."
       />
 
       <div className="grid gap-4 md:grid-cols-3">

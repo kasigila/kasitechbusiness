@@ -8,24 +8,35 @@ import {
 } from "@kasitech/tenancy";
 import { getActorContext } from "@/lib/auth/actor";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import {
+  getPreviewActor,
+  isPreviewUiEnabled,
+  PREVIEW_BUSINESS_ID,
+} from "@/lib/preview";
 
 export const ACTIVE_BUSINESS_COOKIE = "kb_active_business";
 
 export async function requireActor(): Promise<ActorContext> {
-  if (!isSupabaseConfigured()) {
+  if (isSupabaseConfigured()) {
+    const actor = await getActorContext();
+    if (actor) return actor;
+    if (!isPreviewUiEnabled()) {
+      redirect("/login");
+    }
+  } else if (!isPreviewUiEnabled()) {
     redirect("/login?error=config");
   }
 
-  const actor = await getActorContext();
-  if (!actor) {
-    redirect("/login");
-  }
-  return actor;
+  return getPreviewActor("staff");
 }
 
 export async function requireCommandAccess(): Promise<ActorContext> {
   const actor = await requireActor();
   if (!isCommandCenterAllowed(actor)) {
+    // In preview, elevate to staff actor for Command browsing.
+    if (isPreviewUiEnabled() && !isSupabaseConfigured()) {
+      return getPreviewActor("staff");
+    }
     redirect("/app?error=unauthorized_command");
   }
   return actor;
@@ -50,6 +61,10 @@ export async function getActiveBusinessId(
     return [...activeIds][0] ?? null;
   }
 
+  if (isPreviewUiEnabled() && activeIds.has(PREVIEW_BUSINESS_ID)) {
+    return PREVIEW_BUSINESS_ID;
+  }
+
   return null;
 }
 
@@ -69,4 +84,8 @@ export async function requireTenantContext(): Promise<{
   }
 
   return { actor, tenant: resolved.data };
+}
+
+export function isUsingPreviewData(): boolean {
+  return isPreviewUiEnabled() && !isSupabaseConfigured();
 }

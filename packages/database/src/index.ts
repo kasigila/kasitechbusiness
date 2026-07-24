@@ -5,10 +5,12 @@
 
 export const FOUNDATION_MIGRATION = "0001_foundation.sql";
 export const COMMERCIAL_MIGRATION = "0002_commercial.sql";
+export const ADMIN_IMPLEMENTATION_MIGRATION = "0003_admin_implementation.sql";
 
 export const MIGRATIONS = [
   FOUNDATION_MIGRATION,
   COMMERCIAL_MIGRATION,
+  ADMIN_IMPLEMENTATION_MIGRATION,
 ] as const;
 
 export type BusinessStatus =

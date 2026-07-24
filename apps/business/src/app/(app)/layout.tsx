@@ -2,7 +2,11 @@ import Link from "next/link";
 import { Badge, Button } from "@kasitech/ui";
 import { isCommandCenterAllowed } from "@kasitech/tenancy";
 import { signOutAction } from "@/app/(public)/actions";
-import { getActiveBusinessId, requireActor } from "@/lib/auth/guards";
+import {
+  getActiveBusinessId,
+  isUsingPreviewData,
+  requireActor,
+} from "@/lib/auth/guards";
 
 export default async function AppLayout({
   children,
@@ -14,9 +18,18 @@ export default async function AppLayout({
   const activeMembership = actor.memberships.find(
     (m) => m.businessId === activeBusinessId && m.status === "ACTIVE",
   );
+  const preview = isUsingPreviewData();
 
   return (
     <div className="min-h-screen">
+      {preview ? (
+        <div className="bg-[var(--kb-ink)] px-4 py-2 text-center text-sm text-[var(--kb-ivory)]">
+          Preview mode · demo data ·{" "}
+          <Link href="/preview" className="underline underline-offset-4">
+            Preview hub
+          </Link>
+        </div>
+      ) : null}
       <header className="sticky top-0 z-20 border-b border-[var(--kb-border)] bg-[rgb(247_246_242_/0.92)] backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
           <div className="flex min-w-0 items-center gap-3">
@@ -48,15 +61,6 @@ export default async function AppLayout({
                 Billing
               </Link>
             </nav>
-            {actor.memberships.filter((m) => m.status === "ACTIVE").length >
-            1 ? (
-              <Link
-                href="/app/select-business"
-                className="hidden text-sm text-[var(--kb-muted)] underline-offset-4 hover:underline sm:inline"
-              >
-                Switch business
-              </Link>
-            ) : null}
             {isCommandCenterAllowed(actor) ? (
               <Link
                 href="/command"
@@ -65,11 +69,17 @@ export default async function AppLayout({
                 Command
               </Link>
             ) : null}
-            <form action={signOutAction}>
-              <Button type="submit" variant="secondary">
-                Sign out
-              </Button>
-            </form>
+            {!preview ? (
+              <form action={signOutAction}>
+                <Button type="submit" variant="secondary">
+                  Sign out
+                </Button>
+              </form>
+            ) : (
+              <Link href="/login" className="kb-btn kb-btn-secondary">
+                Login
+              </Link>
+            )}
           </div>
         </div>
       </header>

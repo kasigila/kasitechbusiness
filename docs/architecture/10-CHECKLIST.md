@@ -62,9 +62,11 @@ Track completion across phases. Update statuses as work lands.
 
 ## Phase 3 — Super Admin
 
-- [ ] Create Business flow
-- [ ] Business 360 shell
-- [ ] Command metrics (non-vanity)
+- [x] Create Business flow (tenant + subscription + workspace + implementation + invite + audit)
+- [x] Businesses list
+- [x] Business 360 shell
+- [x] Implementation project + tasks on create
+- [x] UI preview mode for visual review without Supabase
 
 ## Phase 4 — Onboarding
 

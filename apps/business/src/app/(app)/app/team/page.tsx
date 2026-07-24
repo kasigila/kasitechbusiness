@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge, EmptyState, PageHeader } from "@kasitech/ui";
-import { getLimit } from "@kasitech/entitlements";
-import { requireTenantContext } from "@/lib/auth/guards";
+import { getLimit, resolveEntitlements } from "@kasitech/entitlements";
+import {
+  isUsingPreviewData,
+  requireTenantContext,
+} from "@/lib/auth/guards";
 import {
   countActiveSeats,
   getEffectiveEntitlements,
@@ -17,6 +20,61 @@ export const metadata: Metadata = {
 
 export default async function TeamPage() {
   const { tenant } = await requireTenantContext();
+
+  if (isUsingPreviewData()) {
+    const entitlements = resolveEntitlements({
+      businessId: tenant.businessId,
+      planKey: "PRO",
+      planName: "Pro",
+      planEntitlements: [
+        { featureKey: "max_users", value: "10", valueType: "limit" },
+      ],
+    });
+    const members = [
+      {
+        id: "1",
+        name: "Demo Owner",
+        email: "owner@demo.lido.test",
+        role: "Business Owner",
+        status: "ACTIVE",
+      },
+      {
+        id: "2",
+        name: "Amina Manager",
+        email: "amina@demo.lido.test",
+        role: "Manager",
+        status: "ACTIVE",
+      },
+      {
+        id: "3",
+        name: "Joel Staff",
+        email: "joel@demo.lido.test",
+        role: "Staff",
+        status: "ACTIVE",
+      },
+      {
+        id: "4",
+        name: "Grace Viewer",
+        email: "grace@demo.lido.test",
+        role: "Viewer",
+        status: "DEACTIVATED",
+      },
+    ];
+
+    return (
+      <TeamView
+        seats={3}
+        limit={10}
+        planName="Pro"
+        members={members}
+        hints={upgradeHintsForLimit("max_users", "PRO")}
+        atLimit={false}
+        canInvite
+        preview
+      />
+    );
+  }
+
   const entitlements = await getEffectiveEntitlements(tenant.businessId);
   const seats = await countActiveSeats(tenant.businessId);
   const limit = entitlements ? getLimit(entitlements, "max_users") : 0;
@@ -39,56 +97,94 @@ export default async function TeamPage() {
     .order("created_at", { ascending: true });
 
   const canInvite = tenant.permissions.has("team.invite");
-  const atLimit = seats >= limit;
+  const atLimit = seats >= limit && limit > 0;
 
+  const mapped =
+    members?.map((member) => {
+      const profile = Array.isArray(member.profiles)
+        ? member.profiles[0]
+        : member.profiles;
+      const role = Array.isArray(member.roles) ? member.roles[0] : member.roles;
+      return {
+        id: member.id as string,
+        name: profile?.full_name ?? "—",
+        email: profile?.email ?? "—",
+        role: role?.name ?? role?.key ?? "—",
+        status: member.status as string,
+      };
+    }) ?? [];
+
+  return (
+    <TeamView
+      seats={seats}
+      limit={limit}
+      planName={entitlements?.planName ?? "current"}
+      members={mapped}
+      hints={hints}
+      atLimit={atLimit}
+      canInvite={canInvite}
+    />
+  );
+}
+
+function TeamView(props: {
+  seats: number;
+  limit: number;
+  planName: string;
+  members: Array<{
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+    status: string;
+  }>;
+  hints: { addonKey?: string; planKey?: string };
+  atLimit: boolean;
+  canInvite: boolean;
+  preview?: boolean;
+}) {
   return (
     <div>
       <PageHeader
         title="Team"
-        description={`Current seats: ${seats} / ${limit}`}
+        description={`Current seats: ${props.seats} / ${props.limit}${props.preview ? " · preview data" : ""}`}
       />
 
-      {atLimit ? (
+      {props.atLimit ? (
         <div className="mb-6 rounded-2xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-4">
           <p className="font-medium">
-            You&apos;ve reached your {entitlements?.planName ?? "current"} plan&apos;s{" "}
-            {limit}-user limit.
-          </p>
-          <p className="mt-1 text-sm text-[var(--kb-muted)]">
-            Request an add-on or higher plan. KasiTech reviews requests — no silent upgrades.
+            You&apos;ve reached your {props.planName} plan&apos;s {props.limit}-user
+            limit.
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
-            {hints.addonKey ? (
+            {props.hints.addonKey ? (
               <UpgradeRequestForm
                 requestType="ADDON"
-                targetAddonKey={hints.addonKey}
+                targetAddonKey={props.hints.addonKey}
                 featureKey="max_users"
                 label="Request Add-on"
               />
             ) : null}
-            {hints.planKey ? (
+            {props.hints.planKey ? (
               <UpgradeRequestForm
                 requestType="UPGRADE_PLAN"
-                targetPlanKey={hints.planKey}
+                targetPlanKey={props.hints.planKey}
                 featureKey="max_users"
                 label="Request Upgrade"
               />
             ) : null}
-            <Link
-              href="/app/billing"
-              className="kb-btn kb-btn-ghost text-sm"
-            >
+            <Link href="/app/billing" className="kb-btn kb-btn-ghost text-sm">
               View billing
             </Link>
           </div>
         </div>
       ) : null}
 
-      {!members?.length ? (
+      {!props.members.length ? (
         <EmptyState
           title="No team members yet"
           description={
-            canInvite
+            props.canInvite
               ? "Invite coworkers when onboarding is ready. Seat limits are enforced server-side."
               : "You don't have permission to manage team members."
           }
@@ -105,41 +201,29 @@ export default async function TeamPage() {
               </tr>
             </thead>
             <tbody>
-              {members.map((member) => {
-                const profile = Array.isArray(member.profiles)
-                  ? member.profiles[0]
-                  : member.profiles;
-                const role = Array.isArray(member.roles)
-                  ? member.roles[0]
-                  : member.roles;
-                return (
-                  <tr
-                    key={member.id}
-                    className="border-b border-[var(--kb-border)] last:border-0"
-                  >
-                    <td className="px-4 py-3">
-                      {profile?.full_name ?? "—"}
-                    </td>
-                    <td className="px-4 py-3">{profile?.email ?? "—"}</td>
-                    <td className="px-4 py-3">
-                      {role?.name ?? role?.key ?? "—"}
-                    </td>
-                    <td className="px-4 py-3">
-                      <Badge
-                        tone={
-                          member.status === "ACTIVE"
-                            ? "success"
-                            : member.status === "DEACTIVATED"
-                              ? "warning"
-                              : "neutral"
-                        }
-                      >
-                        {member.status}
-                      </Badge>
-                    </td>
-                  </tr>
-                );
-              })}
+              {props.members.map((member) => (
+                <tr
+                  key={member.id}
+                  className="border-b border-[var(--kb-border)] last:border-0"
+                >
+                  <td className="px-4 py-3">{member.name}</td>
+                  <td className="px-4 py-3">{member.email}</td>
+                  <td className="px-4 py-3">{member.role}</td>
+                  <td className="px-4 py-3">
+                    <Badge
+                      tone={
+                        member.status === "ACTIVE"
+                          ? "success"
+                          : member.status === "DEACTIVATED"
+                            ? "warning"
+                            : "neutral"
+                      }
+                    >
+                      {member.status}
+                    </Badge>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

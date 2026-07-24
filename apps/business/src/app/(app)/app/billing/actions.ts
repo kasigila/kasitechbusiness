@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { requireTenantContext } from "@/lib/auth/guards";
+import { requireTenantContext, isUsingPreviewData } from "@/lib/auth/guards";
 import { assertPermission } from "@kasitech/tenancy";
 
 const schema = z.object({
@@ -22,6 +22,12 @@ export async function createUpgradeRequestAction(
   _prev: UpgradeActionState,
   formData: FormData,
 ): Promise<UpgradeActionState> {
+  if (isUsingPreviewData()) {
+    return {
+      success:
+        "Preview mode: upgrade request recorded locally only. Connect Supabase to submit real requests.",
+    };
+  }
   const parsed = schema.safeParse({
     requestType: formData.get("requestType"),
     targetPlanKey: formData.get("targetPlanKey") || undefined,

@@ -12,7 +12,8 @@ Commercial multi-tenant B2B SaaS platform for KasiTech clients.
 | Phase 0 — Architecture | Complete (`docs/architecture/`) |
 | Phase 1 — Foundation | Core complete; live Supabase wiring pending |
 | Phase 2 — Commercial | Schema, entitlements, billing/team UX landed |
-| Phases 3–10 | Planned |
+| Phase 3 — Super Admin | Create Business + Business 360 + preview UI |
+| Phases 4–10 | Planned |
 
 ## Architecture docs
 

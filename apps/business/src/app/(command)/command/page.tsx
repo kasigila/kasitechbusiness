@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { EmptyState, PageHeader } from "@kasitech/ui";
-import { requireCommandAccess } from "@/lib/auth/guards";
+import {
+  isUsingPreviewData,
+  requireCommandAccess,
+} from "@/lib/auth/guards";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -10,44 +13,56 @@ export const metadata: Metadata = {
 
 export default async function CommandHomePage() {
   await requireCommandAccess();
-  const supabase = await createClient();
 
-  const [
-    { count: businessCount },
-    { count: activeSubs },
-    { count: onboardingCount },
-    { count: upgradeCount },
-  ] = await Promise.all([
-    supabase.from("businesses").select("id", { count: "exact", head: true }),
-    supabase
-      .from("subscriptions")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "ACTIVE"),
-    supabase
-      .from("businesses")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "ONBOARDING"),
-    supabase
-      .from("upgrade_requests")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "REQUESTED"),
-  ]);
+  let businessCount = 2;
+  let activeSubs = 1;
+  let onboardingCount = 1;
+  let upgradeCount = 0;
+
+  if (!isUsingPreviewData()) {
+    const supabase = await createClient();
+    const [a, b, c, d] = await Promise.all([
+      supabase.from("businesses").select("id", { count: "exact", head: true }),
+      supabase
+        .from("subscriptions")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "ACTIVE"),
+      supabase
+        .from("businesses")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "ONBOARDING"),
+      supabase
+        .from("upgrade_requests")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "REQUESTED"),
+    ]);
+    businessCount = a.count ?? 0;
+    activeSubs = b.count ?? 0;
+    onboardingCount = c.count ?? 0;
+    upgradeCount = d.count ?? 0;
+  }
 
   const cards = [
-    { label: "Businesses", value: businessCount ?? 0, href: "/command" },
-    { label: "Active subscriptions", value: activeSubs ?? 0, href: "/command/plans" },
-    { label: "Onboarding", value: onboardingCount ?? 0, href: "/command" },
-    { label: "Upgrade requests", value: upgradeCount ?? 0, href: "/command" },
+    { label: "Businesses", value: businessCount, href: "/command/businesses" },
+    { label: "Active subscriptions", value: activeSubs, href: "/command/plans" },
+    { label: "Onboarding", value: onboardingCount, href: "/command/businesses" },
+    { label: "Upgrade requests", value: upgradeCount, href: "/command/businesses" },
   ];
 
   return (
     <div>
       <PageHeader
         title="Command Center"
-        description="Internal KasiTech operations. Metrics use live commercial records when migrations are applied — no vanity placeholders."
+        description="Internal KasiTech operations. Metrics use live commercial records when migrations are applied."
       />
 
       <div className="mb-6 flex flex-wrap gap-3 text-sm">
+        <Link href="/command/businesses" className="underline-offset-4 hover:underline">
+          Businesses
+        </Link>
+        <Link href="/command/businesses/new" className="underline-offset-4 hover:underline">
+          Create Business
+        </Link>
         <Link href="/command/plans" className="underline-offset-4 hover:underline">
           Plans & add-ons
         </Link>
@@ -72,8 +87,16 @@ export default async function CommandHomePage() {
 
       <div className="mt-8">
         <EmptyState
-          title="Create Business arrives in Phase 3"
-          description="Commercial catalog and entitlement engine are ready. Business creation will generate tenant, subscription, entitlements, workspace config, onboarding project, owner invite, and audit event."
+          title="Create Business is ready"
+          description="Creates tenant, subscription, workspace draft, implementation project, owner invitation, and audit event in one action."
+          action={
+            <Link
+              href="/command/businesses/new"
+              className="kb-btn kb-btn-primary"
+            >
+              + Create Business
+            </Link>
+          }
         />
       </div>
     </div>
