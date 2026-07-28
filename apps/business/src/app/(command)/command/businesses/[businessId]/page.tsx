@@ -9,6 +9,7 @@ import {
 } from "@/lib/auth/guards";
 import { createClient } from "@/lib/supabase/server";
 import { PREVIEW_BUSINESS } from "@/lib/preview";
+import { PublishWorkspaceButton } from "../../workspace/publish-button";
 
 export const metadata: Metadata = {
   title: "Business 360",
@@ -281,7 +282,8 @@ function Business360View({
           Draft workspace configuration is generated on create. Review discovery
           answers, then publish from the composer when ready.
         </p>
-        <div className="mt-4 flex flex-wrap gap-3 text-sm">
+        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm">
+          <PublishWorkspaceButton businessId={business.id} />
           <Link
             href="/command/workspace"
             className="underline underline-offset-4"
@@ -293,12 +295,6 @@ function Business360View({
             className="underline underline-offset-4"
           >
             Discovery queue
-          </Link>
-          <Link
-            href="/app/discovery"
-            className="underline underline-offset-4"
-          >
-            Client discovery (impersonate via app)
           </Link>
         </div>
       </section>

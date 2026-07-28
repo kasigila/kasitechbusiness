@@ -7,6 +7,7 @@ import {
 } from "@/lib/auth/guards";
 import { PREVIEW_LOCATIONS } from "@/lib/preview";
 import { createClient } from "@/lib/supabase/server";
+import { LocationForms } from "./location-forms";
 
 export const metadata: Metadata = { title: "Locations" };
 
@@ -37,6 +38,8 @@ export default async function LocationsPage() {
         title="Locations"
         description="Physical sites for this business. Seat and location limits come from your plan."
       />
+
+      <LocationForms />
 
       <ul className="divide-y divide-[var(--kb-border)] rounded-2xl border border-[var(--kb-border)] bg-[var(--kb-surface)]">
         {rows.length === 0 ? (

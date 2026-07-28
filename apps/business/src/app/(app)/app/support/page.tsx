@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@kasitech/ui";
 import { requireActor, isUsingPreviewData } from "@/lib/auth/guards";
+import { SupportForm } from "./support-form";
 
 export const metadata: Metadata = { title: "Support" };
 
@@ -23,28 +24,7 @@ export default async function SupportPage() {
             Preview mode — tickets persist after Supabase is connected.
           </p>
         ) : null}
-        <form className="mt-4 space-y-3">
-          <label className="block">
-            <span className="kb-label">Subject</span>
-            <input
-              name="subject"
-              className="kb-input mt-1"
-              placeholder="Brief summary"
-            />
-          </label>
-          <label className="block">
-            <span className="kb-label">Details</span>
-            <textarea
-              name="body"
-              rows={4}
-              className="kb-input mt-1"
-              placeholder="What happened? What did you expect?"
-            />
-          </label>
-          <button type="button" className="kb-btn kb-btn-primary">
-            Submit ticket
-          </button>
-        </form>
+        <SupportForm />
       </section>
 
       <section className="mt-6 rounded-2xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-5">

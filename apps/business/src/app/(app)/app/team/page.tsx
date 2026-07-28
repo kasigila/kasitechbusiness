@@ -13,6 +13,7 @@ import {
 } from "@/lib/entitlements/load";
 import { createClient } from "@/lib/supabase/server";
 import { UpgradeRequestForm } from "../billing/upgrade-form";
+import { InviteForm } from "./invite-form";
 
 export const metadata: Metadata = {
   title: "Team",
@@ -150,6 +151,9 @@ function TeamView(props: {
         description={`Current seats: ${props.seats} / ${props.limit}${props.preview ? " · preview data" : ""}`}
       />
 
+      {props.canInvite && !props.atLimit ? (
+        <InviteForm />
+      ) : null}
       {props.atLimit ? (
         <div className="mb-6 rounded-2xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-4">
           <p className="font-medium">

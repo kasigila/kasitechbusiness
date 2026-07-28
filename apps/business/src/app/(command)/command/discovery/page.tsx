@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { PageHeader } from "@kasitech/ui";
 import { requireCommandAccess, isUsingPreviewData } from "@/lib/auth/guards";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { PREVIEW_BUSINESS } from "@/lib/preview";
+import { PublishWorkspaceButton } from "../workspace/publish-button";
 
 export const metadata: Metadata = { title: "Discovery" };
 
@@ -20,7 +22,21 @@ export default async function CommandDiscoveryPage() {
 
   let rows: Row[] = [];
 
-  if (!isUsingPreviewData()) {
+  if (isUsingPreviewData()) {
+    rows = [
+      {
+        id: "preview-discovery",
+        status: "SUBMITTED",
+        business_id: PREVIEW_BUSINESS.id,
+        submitted_at: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+        businesses: {
+          display_name: PREVIEW_BUSINESS.display_name,
+          slug: PREVIEW_BUSINESS.slug,
+        },
+      },
+    ];
+  } else {
     try {
       const admin = createAdminClient();
       const { data } = await admin
@@ -43,27 +59,14 @@ export default async function CommandDiscoveryPage() {
         description="Review client questionnaires and publish workspace recommendations."
       />
 
-      {isUsingPreviewData() ? (
-        <p className="rounded-2xl border border-dashed border-white/20 p-5 text-sm text-white/70">
-          Preview — discovery sessions appear after Supabase + client submit.
-          Compose workspaces from{" "}
-          <Link href="/command/workspace" className="underline underline-offset-4">
-            Workspace composer
-          </Link>{" "}
-          or open a{" "}
-          <Link href="/command/businesses" className="underline underline-offset-4">
-            Business 360
-          </Link>
-          .
-        </p>
-      ) : rows.length === 0 ? (
+      {rows.length === 0 ? (
         <p className="text-sm text-white/70">No discovery questionnaires yet.</p>
       ) : (
         <ul className="divide-y divide-white/10 rounded-2xl border border-white/10 bg-white/5">
           {rows.map((row) => (
             <li
               key={row.id}
-              className="flex items-center justify-between gap-3 p-4 text-sm"
+              className="flex flex-wrap items-center justify-between gap-3 p-4 text-sm"
             >
               <div>
                 <p className="font-medium">
@@ -76,12 +79,15 @@ export default async function CommandDiscoveryPage() {
                     : ` · created ${new Date(row.created_at).toLocaleString()}`}
                 </p>
               </div>
-              <Link
-                href={`/command/businesses/${row.business_id}`}
-                className="text-xs font-medium underline underline-offset-4"
-              >
-                Open 360
-              </Link>
+              <div className="flex flex-wrap items-center gap-3">
+                <PublishWorkspaceButton businessId={row.business_id} />
+                <Link
+                  href={`/command/businesses/${row.business_id}`}
+                  className="text-xs font-medium underline underline-offset-4"
+                >
+                  Open 360
+                </Link>
+              </div>
             </li>
           ))}
         </ul>

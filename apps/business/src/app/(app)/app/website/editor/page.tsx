@@ -1,8 +1,15 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useActionState, useState, useTransition } from "react";
 import Link from "next/link";
 import { Button, Field, Input, PageHeader } from "@kasitech/ui";
+import {
+  publishWebsiteAction,
+  saveWebsiteDraftAction,
+} from "../actions";
+import type { ActionMessage } from "@/lib/actions/result";
+
+const initial: ActionMessage | null = null;
 
 export default function WebsiteEditorPage() {
   const [headline, setHeadline] = useState("Welcome to Lido Slipway");
@@ -10,9 +17,18 @@ export default function WebsiteEditorPage() {
     "Waterfront dining, events, and evenings by the bay.",
   );
   const [cta, setCta] = useState("Reserve a table");
-  const [status, setStatus] = useState<"DRAFT" | "PUBLISHED">("DRAFT");
-  const [message, setMessage] = useState<string | null>(null);
+  const [draftState, saveAction, saving] = useActionState(
+    saveWebsiteDraftAction,
+    initial,
+  );
+  const [publishState, publishAction, publishing] = useActionState(
+    publishWebsiteAction,
+    initial,
+  );
   const [pending, startTransition] = useTransition();
+
+  const message = publishState?.message || draftState?.message;
+  const ok = publishState?.ok ?? draftState?.ok;
 
   return (
     <div>
@@ -27,18 +43,11 @@ export default function WebsiteEditorPage() {
       />
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <form
-          className="grid gap-4 rounded-2xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-5"
-          onSubmit={(e) => {
-            e.preventDefault();
-            startTransition(async () => {
-              await new Promise((r) => setTimeout(r, 350));
-              setStatus("DRAFT");
-              setMessage("Draft saved. Public site still shows last published version.");
-            });
-          }}
-        >
+        <form action={saveAction} className="grid gap-4 rounded-2xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-5">
           <h2 className="font-semibold">Hero section</h2>
+          <input type="hidden" name="headline" value={headline} />
+          <input type="hidden" name="subheadline" value={subheadline} />
+          <input type="hidden" name="cta" value={cta} />
           <Field label="Headline" htmlFor="headline">
             <Input
               id="headline"
@@ -57,28 +66,24 @@ export default function WebsiteEditorPage() {
             <Input id="cta" value={cta} onChange={(e) => setCta(e.target.value)} />
           </Field>
           <div className="flex flex-wrap gap-2">
-            <Button type="submit" loading={pending} variant="secondary">
+            <Button type="submit" loading={saving || pending} variant="secondary">
               Save Draft
             </Button>
             <Button
-              type="button"
-              loading={pending}
-              onClick={() =>
-                startTransition(async () => {
-                  await new Promise((r) => setTimeout(r, 450));
-                  setStatus("PUBLISHED");
-                  setMessage(
-                    "Published. Version recorded. Public API will serve this content after cache refresh.",
-                  );
-                })
-              }
+              type="submit"
+              formAction={publishAction}
+              loading={publishing || pending}
+              onClick={() => startTransition(() => undefined)}
             >
               Publish
             </Button>
           </div>
           {message ? (
-            <p className="text-sm text-[var(--kb-success)]" role="status">
-              {message} Current status: {status}.
+            <p
+              className={`text-sm ${ok ? "text-[var(--kb-success)]" : "text-[var(--kb-danger)]"}`}
+              role="status"
+            >
+              {message}
             </p>
           ) : null}
         </form>

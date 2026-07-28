@@ -211,6 +211,25 @@ export async function createBusiness(input: {
     invited_by: actorUserId,
   });
 
+  try {
+    const { invitationEmailText, sendEmail } = await import("@/lib/email");
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const inviteUrl = `${appUrl}/invite/${token}`;
+    await sendEmail({
+      to: data.ownerEmail,
+      subject: `You're invited to manage ${data.displayName}`,
+      text: invitationEmailText({
+        businessName: data.displayName,
+        inviteUrl,
+        ownerName: data.ownerName,
+      }),
+      businessId,
+      templateKey: "owner.invite",
+    });
+  } catch {
+    // Email is best-effort; invitation token still returned for Command to share.
+  }
+
   await supabase.from("audit_logs").insert({
     business_id: businessId,
     actor_user_id: actorUserId,

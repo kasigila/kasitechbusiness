@@ -1,9 +1,11 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useActionState, useMemo, useState } from "react";
 import Link from "next/link";
 import { Button, PageHeader } from "@kasitech/ui";
 import { recommendWorkspace } from "@kasitech/workspace";
+import { saveDiscoveryAction } from "./actions";
+import type { ActionMessage } from "@/lib/actions/result";
 
 const SELLS = [
   "products",
@@ -37,13 +39,14 @@ const PRIORITIES = [
   "website_traffic",
 ] as const;
 
+const initial: ActionMessage | null = null;
+
 export default function DiscoveryPage() {
   const [sells, setSells] = useState<string[]>(["food", "drinks"]);
   const [ops, setOps] = useState<string[]>(["reservations", "tables", "events"]);
   const [priorities, setPriorities] = useState<string[]>(["reservations"]);
   const [pain, setPain] = useState("Manual reservation confirmations on WhatsApp");
-  const [saved, setSaved] = useState(false);
-  const [pending, startTransition] = useTransition();
+  const [state, action, pending] = useActionState(saveDiscoveryAction, initial);
 
   const recommendation = useMemo(
     () =>
@@ -68,7 +71,13 @@ export default function DiscoveryPage() {
       />
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <section className="rounded-2xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-5">
+        <form action={action} className="rounded-2xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-5">
+          <input type="hidden" name="sells" value={sells.join(",")} />
+          <input type="hidden" name="operations" value={ops.join(",")} />
+          <input type="hidden" name="priorities" value={priorities.join(",")} />
+          <input type="hidden" name="pain" value={pain} />
+          <input type="hidden" name="industry" value="hospitality" />
+
           <h2 className="font-semibold">What do you sell?</h2>
           <div className="mt-3 flex flex-wrap gap-2">
             {SELLS.map((item) => (
@@ -135,24 +144,18 @@ export default function DiscoveryPage() {
             />
           </label>
 
-          <Button
-            className="mt-4"
-            loading={pending}
-            onClick={() =>
-              startTransition(async () => {
-                await new Promise((r) => setTimeout(r, 400));
-                setSaved(true);
-              })
-            }
-          >
+          <Button className="mt-4" type="submit" loading={pending}>
             Save discovery answers
           </Button>
-          {saved ? (
-            <p className="mt-2 text-sm text-[var(--kb-success)]" role="status">
-              Saved for KasiTech review. Recommendation stays unpublished until admin accepts.
+          {state ? (
+            <p
+              className={`mt-2 text-sm ${state.ok ? "text-[var(--kb-success)]" : "text-[var(--kb-danger)]"}`}
+              role="status"
+            >
+              {state.message}
             </p>
           ) : null}
-        </section>
+        </form>
 
         <section className="rounded-2xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-5">
           <h2 className="font-semibold">Recommended workspace (draft)</h2>
@@ -181,7 +184,7 @@ export default function DiscoveryPage() {
               ))}
             </ul>
           </div>
-          <Link href="/command/businesses" className="kb-btn kb-btn-secondary mt-5 inline-flex">
+          <Link href="/command/discovery" className="kb-btn kb-btn-secondary mt-5 inline-flex">
             Admin reviews in Command
           </Link>
         </section>

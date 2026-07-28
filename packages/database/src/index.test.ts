@@ -7,6 +7,7 @@ import {
   FOUNDATION_MIGRATION,
   ADMIN_IMPLEMENTATION_MIGRATION,
   OPERATIONS_MIGRATION,
+  PAYMENTS_GROWTH_MIGRATION,
   MIGRATIONS,
 } from "./index";
 
@@ -46,6 +47,7 @@ describe("commercial migration", () => {
       COMMERCIAL_MIGRATION,
       ADMIN_IMPLEMENTATION_MIGRATION,
       OPERATIONS_MIGRATION,
+      PAYMENTS_GROWTH_MIGRATION,
     ]);
   });
 
@@ -57,6 +59,15 @@ describe("commercial migration", () => {
     expect(sql).toContain("support_tickets");
     expect(sql).toContain("enable row level security");
     expect(sql).toContain("'bookings'");
+  });
+
+  it("payments growth migration covers loyalty and payments", () => {
+    const sql = readFileSync(join(root, "migrations", PAYMENTS_GROWTH_MIGRATION), "utf8");
+    expect(sql).toContain("payment_intents");
+    expect(sql).toContain("loyalty_programs");
+    expect(sql).toContain("campaigns");
+    expect(sql).toContain("automation_rules");
+    expect(sql).toContain("billing_policy_events");
   });
 
   it("seeds Launch/Growth/Pro/Scale/Enterprise", () => {

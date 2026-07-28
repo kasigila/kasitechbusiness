@@ -2,16 +2,26 @@ import { NextResponse } from "next/server";
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isUsingPreviewData } from "@/lib/auth/guards";
+import { rateLimit } from "@/lib/rate-limit";
 
 /**
  * Public published CMS content for marketing sites / apps.
  * Only returns published rows — never drafts.
  */
 export async function GET(
-  _request: Request,
+  request: Request,
   context: { params: Promise<{ businessSlug: string; locale: string }> },
 ) {
   const { businessSlug, locale } = await context.params;
+
+  const limited = rateLimit({
+    key: `public-cms:${businessSlug}:${request.headers.get("x-forwarded-for") || "local"}`,
+    limit: 120,
+    windowMs: 60_000,
+  });
+  if (!limited.allowed) {
+    return NextResponse.json({ error: "rate_limited" }, { status: 429 });
+  }
 
   if (isUsingPreviewData()) {
     return NextResponse.json({

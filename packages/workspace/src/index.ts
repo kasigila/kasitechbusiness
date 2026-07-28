@@ -202,6 +202,27 @@ export function recommendWorkspace(input: {
       group: "INSIGHTS",
       entitlement: "basic_analytics_enabled",
     },
+    {
+      key: "loyalty",
+      label: "Loyalty",
+      href: "/app/loyalty",
+      group: "GROWTH",
+      entitlement: "loyalty_enabled",
+    },
+    {
+      key: "campaigns",
+      label: "Campaigns",
+      href: "/app/campaigns",
+      group: "GROWTH",
+      entitlement: "campaigns_enabled",
+    },
+    {
+      key: "automation",
+      label: "Automation",
+      href: "/app/automation",
+      group: "GROWTH",
+      entitlement: "automation_enabled",
+    },
     { key: "team", label: "Team", href: "/app/team", group: "MANAGEMENT" },
     {
       key: "locations",

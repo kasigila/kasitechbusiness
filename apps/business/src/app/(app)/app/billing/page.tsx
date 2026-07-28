@@ -19,6 +19,7 @@ import {
 } from "@/lib/entitlements/load";
 import { createClient } from "@/lib/supabase/server";
 import { UpgradeRequestForm } from "./upgrade-form";
+import { PaymentStartForm } from "./payment-form";
 
 export const metadata: Metadata = {
   title: "Billing",
@@ -175,6 +176,15 @@ function BillingView(props: {
             : "Current plan, add-ons, usage limits, and upgrade requests. Upgrades are reviewed by KasiTech — nothing is charged silently."
         }
       />
+
+      <section className="mb-6 rounded-2xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-5">
+        <h2 className="text-lg font-semibold">Pay invoice</h2>
+        <p className="mt-1 text-sm text-[var(--kb-muted)]">
+          Manual bank recording works now. M-Pesa and card use your aggregator
+          keys when configured — card numbers never touch KasiTech servers.
+        </p>
+        <PaymentStartForm defaultAmountMinor={props.planPrice ?? 150000} />
+      </section>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <section className="rounded-2xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-5">

@@ -84,34 +84,35 @@ Track completion across phases. Update statuses as work lands.
 ## Phase 6 — CMS
 
 - [x] Structured CMS schema + website/editor UI
-- [ ] Draft / preview / publish / versions (schema ready; full publish pipeline pending)
+- [x] Draft / preview / publish / versions (actions + version snapshots)
 - [x] Public content API v1
-- [ ] Cache revalidation
+- [x] Cache revalidation (`revalidatePath` on publish)
 
 ## Phase 7 — Core modules
 
-- [x] Catalog, bookings, events, customers, locations, team (UI + schema)
-- [ ] Live CRUD mutations wired to Supabase for all modules
+- [x] Catalog, bookings, events, customers, locations, team (UI + schema + mutations)
+- [ ] Full E2E against staging Supabase (needs your project)
 
 ## Phase 8 — Advanced
 
 - [x] QR, tables, service requests, analytics (UI + schema)
-- [ ] Loyalty, campaigns, automation
+- [x] Loyalty / campaigns / automation schema + gated nav shells
+- [ ] Live messaging provider send for campaigns (needs your provider keys)
 
 ## Phase 9 — Billing & support
 
-- [x] Payments abstraction stub + invoices schema
+- [x] Payments abstraction (manual + hosted M-Pesa/card stubs) + webhook route
 - [x] Upgrade requests (commercial phase)
-- [ ] Suspension policy automation
-- [x] Support + professional services UI
+- [x] Suspension policy evaluator + Command action
+- [x] Support + professional services submit actions
 
 ## Phase 10 — Hardening
 
-- [ ] Rate limits (edge)
+- [x] Rate limits (in-memory on sensitive actions + public API)
 - [x] Monitoring / backups docs (`docs/operations/HARDENING.md`)
 - [ ] Full E2E critical path against staging
 - [ ] Accessibility pass
-- [ ] Staging + production gates
+- [ ] Staging + production gates (needs your Vercel/Supabase)
 - [x] Operational runbooks (deploy + hardening)
 
 ## Non-negotiables (always)
