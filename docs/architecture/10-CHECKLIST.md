@@ -1,0 +1,124 @@
+# Master Build Checklist
+
+Track completion across phases. Update statuses as work lands.
+
+## Phase 0 — Architecture
+
+- [x] Repository audit
+- [x] Current architecture explained (greenfield)
+- [x] Existing assets identified
+- [x] Debt / security concerns listed
+- [x] Spec gap analysis
+- [x] Final architecture proposed
+- [x] Database schema proposed
+- [x] Tenancy / RLS strategy proposed
+- [x] Folder / module structure proposed
+- [x] Implementation phases proposed
+- [x] External services identified
+- [x] Vendor lock-in assessed
+- [x] Security risks identified
+- [x] Spec revisions noted
+- [x] Checklist created
+
+## Phase 1 — Foundation
+
+- [x] Monorepo (pnpm + turbo) scaffolded
+- [x] `@kasitech/ui` primitives (button, input, etc.)
+- [x] `@kasitech/database` migrations 0001 foundation
+- [x] RLS helpers + policies
+- [x] `@kasitech/auth` session helpers
+- [x] `@kasitech/permissions` catalog + checks
+- [x] `@kasitech/audit` writer
+- [x] `@kasitech/tenancy` context resolution
+- [x] `@kasitech/validation` error types
+- [x] Login / forgot-password pages (no signup)
+- [x] Auth middleware route gates
+- [x] Command route stub (staff-only)
+- [x] App shell stub (member-only)
+- [x] `.env.example`
+- [x] Unit tests (permissions, tenancy helpers)
+- [x] Isolation test skeleton
+- [x] Lint + typecheck + test scripts
+- [x] README + ops notes
+- [x] CI workflow (lint/typecheck/test)
+
+### Remaining Phase 1 polish
+
+- [ ] Wire live Supabase project + apply migrations `0001` + `0002`
+- [x] Load ActorContext from DB memberships in `/app` and `/command`
+- [x] Enforce Command Center with `internal_roles` server-side (beyond middleware auth)
+- [ ] Postgres RLS integration tests against staging DB
+- [ ] Invitation email send path (Resend)
+
+## Phase 2 — Commercial
+
+- [x] Plans / features / entitlements schema
+- [x] Entitlement resolver
+- [x] Seat & location limit hooks
+- [x] Seed Launch/Growth/Pro/Scale/Enterprise
+- [x] Billing UX (plan, add-ons, usage, upgrade requests)
+- [x] Team seats display + limit messaging
+- [x] Command plans catalog view
+
+## Phase 3 — Super Admin
+
+- [x] Create Business flow (tenant + subscription + workspace + implementation + invite + audit)
+- [x] Businesses list
+- [x] Business 360 shell
+- [x] Implementation project + tasks on create
+- [x] UI preview mode for visual review without Supabase
+
+## Phase 4 — Onboarding
+
+- [x] Discovery system (client questionnaire + draft recommendation)
+- [x] Recommendations (unpublished drafts via workspace package)
+- [x] Owner invite accept flow (token hash → membership; needs live Supabase for E2E)
+- [x] Onboarding mode UX
+
+## Phase 5 — Workspace
+
+- [x] Dynamic navigation / terminology / widgets
+- [x] Workspace composer (Command)
+- [x] Extension registry (`registerWidget`)
+
+## Phase 6 — CMS
+
+- [x] Structured CMS schema + website/editor UI
+- [x] Draft / preview / publish / versions (actions + version snapshots)
+- [x] Public content API v1
+- [x] Cache revalidation (`revalidatePath` on publish)
+
+## Phase 7 — Core modules
+
+- [x] Catalog, bookings, events, customers, locations, team (UI + schema + mutations)
+- [ ] Full E2E against staging Supabase (needs your project)
+
+## Phase 8 — Advanced
+
+- [x] QR, tables, service requests, analytics (UI + schema)
+- [x] Loyalty / campaigns / automation schema + gated nav shells
+- [ ] Live messaging provider send for campaigns (needs your provider keys)
+
+## Phase 9 — Billing & support
+
+- [x] Payments abstraction (manual + hosted M-Pesa/card stubs) + webhook route
+- [x] Upgrade requests (commercial phase)
+- [x] Suspension policy evaluator + Command action
+- [x] Support + professional services submit actions
+
+## Phase 10 — Hardening
+
+- [x] Rate limits (in-memory on sensitive actions + public API)
+- [x] Monitoring / backups docs (`docs/operations/HARDENING.md`)
+- [ ] Full E2E critical path against staging
+- [ ] Accessibility pass
+- [ ] Staging + production gates (needs your Vercel/Supabase)
+- [x] Operational runbooks (deploy + hardening)
+
+## Non-negotiables (always)
+
+- [ ] No public registration
+- [ ] No hard-coded customer names in shared logic
+- [ ] No client-trusted business_id
+- [ ] No service-role secrets client-side
+- [ ] Tenant isolation tests green before release

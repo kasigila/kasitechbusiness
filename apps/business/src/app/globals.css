@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f3f2ec;
+  --foreground: #141414;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-kb-black: var(--kb-black);
+  --color-kb-ivory: var(--kb-ivory);
+  --color-kb-green: var(--kb-green);
+  --color-kb-ink: var(--kb-ink);
+  --color-kb-muted: var(--kb-muted);
+  --color-kb-border: var(--kb-border);
+  --color-kb-surface: var(--kb-surface);
+  --font-sans: var(--font-kasi-sans);
+  --font-display: var(--font-kasi-display);
+  --font-mono: var(--font-kasi-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgb(184 230 0 / 18%), transparent 55%),
+    radial-gradient(900px 500px at 100% 0%, rgb(20 20 20 / 6%), transparent 50%),
+    linear-gradient(180deg, #f7f6f2 0%, #efeee8 100%);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--kb-green-strong);
+  outline-offset: 3px;
+}
+
+a {
+  color: inherit;
+}
