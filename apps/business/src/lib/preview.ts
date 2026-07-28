@@ -13,22 +13,41 @@ export function isPreviewUiEnabled(): boolean {
   return process.env.NEXT_PUBLIC_PREVIEW_UI === "true";
 }
 
+/** Cookie set by mock login — `owner` (customer) or `staff` (KasiTech). */
+export const PREVIEW_PERSONA_COOKIE = "kb_preview_persona";
+
+export type PreviewPersona = "owner" | "staff";
+
+export function parsePreviewPersona(value: string | undefined | null): PreviewPersona | null {
+  if (value === "owner" || value === "staff") return value;
+  return null;
+}
+
 export const PREVIEW_BUSINESS_ID = "00000000-0000-4000-8000-000000000001";
 
-export function getPreviewActor(kind: "owner" | "staff" = "staff"): ActorContext {
+export function getPreviewActor(kind: PreviewPersona = "owner"): ActorContext {
   const permissions = [
     ...ROLE_PERMISSION_DEFAULTS.BUSINESS_OWNER,
   ] as Permission[];
 
   return {
-    userId: "00000000-0000-4000-8000-000000000099",
-    email: kind === "staff" ? "admin@kasitechinnovations.com" : "owner@demo.lido.test",
+    userId:
+      kind === "staff"
+        ? "00000000-0000-4000-8000-000000000098"
+        : "00000000-0000-4000-8000-000000000099",
+    email:
+      kind === "staff"
+        ? "admin@kasitechinnovations.com"
+        : "owner@demo.lido.test",
     internalRoles: kind === "staff" ? ["KASITECH_SUPER_ADMIN"] : [],
     memberships: [
       {
         id: "00000000-0000-4000-8000-000000000010",
         businessId: PREVIEW_BUSINESS_ID,
-        userId: "00000000-0000-4000-8000-000000000099",
+        userId:
+          kind === "staff"
+            ? "00000000-0000-4000-8000-000000000098"
+            : "00000000-0000-4000-8000-000000000099",
         roleKey: "BUSINESS_OWNER",
         status: "ACTIVE",
         permissions,

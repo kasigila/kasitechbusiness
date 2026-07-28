@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LoginForm } from "./login-form";
+import { isPreviewUiEnabled } from "@/lib/preview";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 export const metadata: Metadata = {
   title: "Sign In",
@@ -14,6 +16,7 @@ export default async function LoginPage({
   const params = await searchParams;
   const marketingUrl =
     process.env.NEXT_PUBLIC_MARKETING_URL || "https://kasitechinnovations.com";
+  const showMockLogin = isPreviewUiEnabled() && !isSupabaseConfigured();
 
   return (
     <main className="flex min-h-screen items-center justify-center px-4 py-10">
@@ -31,13 +34,13 @@ export default async function LoginPage({
         </div>
 
         <div className="rounded-2xl border border-[var(--kb-border)] bg-[var(--kb-surface)] p-6 shadow-[var(--kb-shadow)] sm:p-8">
-          {params.error === "config" ? (
+          {params.error === "config" && !showMockLogin ? (
             <p className="mb-4 text-sm text-[var(--kb-warning)]" role="status">
               Authentication is not configured. Set Supabase environment
               variables to enable sign-in.
             </p>
           ) : null}
-          <LoginForm nextPath={params.next} />
+          <LoginForm nextPath={params.next} showMockLogin={showMockLogin} />
         </div>
 
         <footer className="mt-8 space-y-2 text-center text-sm text-[var(--kb-muted)]">

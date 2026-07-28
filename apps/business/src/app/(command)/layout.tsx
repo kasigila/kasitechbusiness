@@ -77,9 +77,11 @@ export default async function CommandLayout({
                 </Button>
               </form>
             ) : (
-              <Link href="/login" className="kb-btn kb-btn-secondary">
-                Login
-              </Link>
+              <form action={signOutAction}>
+                <Button type="submit" variant="secondary">
+                  End mock login
+                </Button>
+              </form>
             )}
           </div>
         </div>

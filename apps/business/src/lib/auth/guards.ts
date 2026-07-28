@@ -11,10 +11,21 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import {
   getPreviewActor,
   isPreviewUiEnabled,
+  parsePreviewPersona,
   PREVIEW_BUSINESS_ID,
+  PREVIEW_PERSONA_COOKIE,
 } from "@/lib/preview";
 
 export const ACTIVE_BUSINESS_COOKIE = "kb_active_business";
+
+async function resolvePreviewActor(): Promise<ActorContext> {
+  const store = await cookies();
+  const persona = parsePreviewPersona(
+    store.get(PREVIEW_PERSONA_COOKIE)?.value,
+  );
+  // Default to customer/owner so demos match what clients will see.
+  return getPreviewActor(persona ?? "owner");
+}
 
 export async function requireActor(): Promise<ActorContext> {
   if (isSupabaseConfigured()) {
@@ -27,16 +38,12 @@ export async function requireActor(): Promise<ActorContext> {
     redirect("/login?error=config");
   }
 
-  return getPreviewActor("staff");
+  return resolvePreviewActor();
 }
 
 export async function requireCommandAccess(): Promise<ActorContext> {
   const actor = await requireActor();
   if (!isCommandCenterAllowed(actor)) {
-    // In preview, elevate to staff actor for Command browsing.
-    if (isPreviewUiEnabled() && !isSupabaseConfigured()) {
-      return getPreviewActor("staff");
-    }
     redirect("/app?error=unauthorized_command");
   }
   return actor;

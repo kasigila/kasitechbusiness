@@ -34,9 +34,12 @@ export default async function AppLayout({
     <div className="min-h-screen">
       {preview ? (
         <div className="bg-[var(--kb-ink)] px-4 py-2 text-center text-sm text-[var(--kb-ivory)]">
-          Preview mode · demo hospitality workspace ·{" "}
-          <Link href="/preview" className="underline underline-offset-4">
-            Preview hub
+          Preview · signed in as{" "}
+          <strong>{actor.email}</strong>
+          {actor.internalRoles.length ? " (KasiTech staff)" : " (demo customer)"}{" "}
+          ·{" "}
+          <Link href="/login" className="underline underline-offset-4">
+            Switch account
           </Link>
         </div>
       ) : null}
@@ -108,9 +111,11 @@ export default async function AppLayout({
                     </Button>
                   </form>
                 ) : (
-                  <Link href="/login" className="kb-btn kb-btn-secondary">
-                    Login
-                  </Link>
+                  <form action={signOutAction}>
+                    <Button type="submit" variant="secondary">
+                      End mock login
+                    </Button>
+                  </form>
                 )}
               </div>
             </div>

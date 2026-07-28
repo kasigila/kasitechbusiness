@@ -92,5 +92,17 @@ export async function signOutAction() {
     const supabase = await createClient();
     await supabase.auth.signOut();
   }
+
+  try {
+    const { cookies } = await import("next/headers");
+    const { PREVIEW_PERSONA_COOKIE } = await import("@/lib/preview");
+    const { ACTIVE_BUSINESS_COOKIE } = await import("@/lib/auth/guards");
+    const store = await cookies();
+    store.delete(PREVIEW_PERSONA_COOKIE);
+    store.delete(ACTIVE_BUSINESS_COOKIE);
+  } catch {
+    // ignore cookie clear failures
+  }
+
   redirect("/login");
 }

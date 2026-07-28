@@ -24,26 +24,26 @@ export default function PreviewHubPage() {
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2">
           <PreviewCard
-            title="Sign in"
-            description="Client login screen — no public registration."
+            title="Mock login (start here)"
+            description="Sign in as a demo customer or KasiTech staff — closest to the real experience."
             href="/login"
             cta="Open login"
           />
           <PreviewCard
             title="Client workspace"
-            description="Overview, team seats, and billing UX."
-            href="/app"
-            cta="Open workspace"
+            description="After mock login as customer: overview, menu, bookings, billing."
+            href="/login"
+            cta="Log in as customer"
           />
           <PreviewCard
             title="Command Center"
-            description="Internal businesses, create flow, and Business 360."
-            href="/command"
-            cta="Open command"
+            description="After mock login as staff: businesses, create flow, Business 360."
+            href="/login"
+            cta="Log in as staff"
           />
           <PreviewCard
             title="Create Business"
-            description="Super Admin tenant creation form."
+            description="Super Admin tenant creation form (use staff mock login first)."
             href="/command/businesses/new"
             cta="Open form"
           />
